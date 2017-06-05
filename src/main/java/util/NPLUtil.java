@@ -15,9 +15,6 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,10 +62,12 @@ public class NPLUtil {
      * @throws IOException if the post request went wrong
      */
     public static List<List<String>> keywords(List<String> data, Double threshold) throws IOException {
-        final List<List<String>> rtn = new ArrayList<>();
-        for (List<List> list : keywordsAnalysis(data))
-            rtn.add(list.stream().filter((List l) -> (Double) l.get(0) > threshold).map((List l) -> (String) l.get(1)).collect(Collectors.toList()));
-        return rtn;
+        return keywordsAnalysis(data).stream()
+                .map(list -> list.stream()
+                        .filter(l -> (Double) l.get(0) > threshold)
+                        .map(l -> (String) l.get(1))
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
     }
 
     private static List sendPost(String uri, List<String> data, Type type) throws IOException {
